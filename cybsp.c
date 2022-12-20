@@ -110,7 +110,7 @@ cy_rslt_t cybsp_init(void)
     // This is done to ensure configuration is available for all cores that might need to use it.
     // In the case of a dual core project, this can be changed below to perform initialization on
     // the CM7 if necessary.
-    #if defined(CORE_NAME_CM0_0) || !(__CM0P_PRESENT) || (defined(CORE_NAME_CM7_0) && \
+    #if defined(CORE_NAME_CM0P_0) || !(__CM0P_PRESENT) || (defined(CORE_NAME_CM7_0) && \
     defined(CY_USING_PREBUILT_CM0P_IMAGE))
     cycfg_config_init();
     #endif

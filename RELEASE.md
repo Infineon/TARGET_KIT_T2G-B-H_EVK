@@ -14,6 +14,8 @@ The KIT_T2G-B-H_EVK library includes the following:
 * API documentation
 
 ### What Changed?
+#### v1.1.0
+* Add macro `CYBSP_USER_BTN_DRIVE` indicating the drive mode that should be used for user buttons
 #### v1.0.0
 Note: This revision is only compatible with ModusToolbox Tools 3.0 and newer.
 * Initial production release
