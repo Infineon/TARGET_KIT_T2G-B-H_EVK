@@ -39,31 +39,59 @@ define symbol RAMVECTORS_ALIGNMENT              = 128;
 define symbol sram_start_reserve                = 0;
 define symbol sram_private_for_srom             = 0x00000800; /* Private SRAM for SROM (e.g. API processing). Reserved at the beginning */
 
-define symbol cm0plus_sram_reserve              = 0x00020000; /* cm0 sram size */
-define symbol cm0plus_code_flash_reserve        = 0x00080000; /* cm7_0 sram size */
-define symbol cm7_0_code_flash_reserve          = 0x00200000;
+define symbol cm0plus_sram_reserve              = 0x00004000; /* 16K : cm0 sram size */
+define symbol cm0plus_code_flash_reserve        = 0x00080000; /* 512K: cm0 flash size */
 
 define symbol sram_base_address                 = 0x28000000;
 define symbol code_flash_base_address           = 0x10000000;
-define symbol code_flash_total_size             = 0x00080000;
 
 define symbol ecc_init_width                    = 8; /* Most restrictive native ECC width of all "normal" memories (SRAM, DTCM, ITCM) in any Traveo II derivate is used to keep the code generic */
 
 define symbol cm0plus_heap_reserve              = 0x00001000;
 define symbol cm0plus_stack_reserve             = 0x00001000;
 
-define symbol heap_reserve                      = cm0plus_heap_reserve;
-define symbol stack_reserve                     = (cm0plus_stack_reserve + (ecc_init_width - 1)) & (~((ecc_init_width - 1))); /* Ensure that stack size is an integer multiple of ECC init width (round up) */
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__ = 0x00000000;
+
+/* The symbols below define the location and size of blocks of memory in the target.
+ * Use these symbols to specify the memory regions available for allocation.
+ */
+
+/* The following symbols control RAM and flash memory allocation for the CM0+ core.
+ * You can change the memory allocation by editing RAM and Flash values.
+ * Using this memory region for other purposes will lead to unexpected behavior.
+ * Your changes must be aligned with the corresponding symbols for CM7 core in 'xx_cm7.icf',
+ * where 'xx' is the device group; for example, 'xmc7200d_x8384_cm7.icf'.
+ * any changes here must also be aligned in file 'xmc7xxx_partition.h'.
+ * after which cm0p core aplication must be build and flashed again.
+ */
+/* RAM */
+define symbol __ICFEDIT_region_RAM_start__ = 0x28000800; // sram_base_address + sram_start_reserve + sram_private_for_srom;
+define symbol __ICFEDIT_region_RAM_end__   = 0x28003FFF; // cm0plus_sram_reserve - 1
+
+/* Flash */
+define symbol __ICFEDIT_region_ROM_start__ = 0x10000000; // code_flash_base_address
+define symbol __ICFEDIT_region_ROM_end__   = 0x1007FFFF; // cm0plus_code_flash_reserve - 1
+
+/*-Sizes-*/
+
+define symbol __ICFEDIT_size_cstack__ = 0x00001000; //cm0plus_stack_reserve
+/* Defines the minimum heap size. The actual heap size will be expanded to the end of the stack region */
+define symbol __ICFEDIT_size_heap__ = 0x00001000; //cm0plus_heap_reserve
+
+/**** End of ICF editor section. ###ICF###*/
+
+define symbol heap_reserve                      = __ICFEDIT_size_heap__;
+define symbol stack_reserve                     = (__ICFEDIT_size_cstack__ + (ecc_init_width - 1)) & (~((ecc_init_width - 1))); /* Ensure that stack size is an integer multiple of ECC init width (round up) */
 
 
-define symbol _base_SRAM_CM0P                   = sram_base_address + sram_start_reserve + sram_private_for_srom;
-define symbol _size_SRAM_CM0P                   = cm0plus_sram_reserve - sram_start_reserve - sram_private_for_srom;
-define symbol _base_CODE_FLASH_CM0P             = code_flash_base_address;
-define symbol _size_CODE_FLASH_CM0P             = cm0plus_code_flash_reserve;
-define symbol _base_CODE_FLASH_CM7_0            = code_flash_base_address + cm0plus_code_flash_reserve;
-define symbol _size_CODE_FLASH_CM7_0            = cm7_0_code_flash_reserve;
-define symbol _base_CODE_FLASH_CM7_1            = code_flash_base_address + cm0plus_code_flash_reserve + cm7_0_code_flash_reserve;
-define symbol _size_CODE_FLASH_CM7_1            = code_flash_total_size - cm0plus_code_flash_reserve - cm7_0_code_flash_reserve;
+define symbol _base_SRAM_CM0P                   = __ICFEDIT_region_RAM_start__;
+define symbol _size_SRAM_CM0P                   = __ICFEDIT_region_RAM_end__ - __ICFEDIT_region_RAM_start__ + 1;
+define symbol _base_CODE_FLASH_CM0P             = __ICFEDIT_region_ROM_start__;
+define symbol _size_CODE_FLASH_CM0P             = __ICFEDIT_region_ROM_end__ - __ICFEDIT_region_ROM_start__ + 1;
 
 /*============================================================
  * Memory definitions
@@ -74,8 +102,6 @@ define memory mem with size = 4G;
 
 define region SRAM                              = mem:[from _base_SRAM_CM0P          size _size_SRAM_CM0P           ];
 define region CODE_FLASH                        = mem:[from _base_CODE_FLASH_CM0P    size _size_CODE_FLASH_CM0P     ];
-define region CODE_FLASH_CM7_0                  = mem:[from _base_CODE_FLASH_CM7_0   size _size_CODE_FLASH_CM7_0    ];
-define region CODE_FLASH_CM7_1                  = mem:[from _base_CODE_FLASH_CM7_1   size _size_CODE_FLASH_CM7_1    ];
 
 /*============================================================
  * Block definitions

@@ -41,20 +41,18 @@ SEARCH_DIR(.)
 GROUP(libgcc.a libc.a libm.a libnosys.a)
 ENTRY(Reset_Handler)
 
-/* The size of the stack section at the end of CM4 SRAM */
+/* The size of the stack section at the end of CM7_1 SRAM */
 STACK_SIZE = 0x1000;
 RAMVECTORS_ALIGNMENT                = 128;
 
 sram_start_reserve                  = 0;
 sram_private_for_srom               = 0x00000800; /* Private SRAM for SROM (e.g. API processing). Reserved at the beginning */
 
-cm0plus_sram_reserve                = 0x00020000; /* cm0 sram size */
-cm0plus_code_flash_reserve          = 0x00080000; /* cm7_0 sram size */
-cm7_0_code_flash_reserve            = 0x00200000;
+cm0plus_sram_reserve                = 0x00004000; /* 16K : cm0 sram size */
+cm0plus_code_flash_reserve          = 0x00080000; /* 512K: cm0 flash size */
 
 sram_base_address                   = 0x28000000;
 code_flash_base_address             = 0x10000000;
-code_flash_total_size               = 0x00080000;
 
 _base_SRAM_CM0P                     = sram_base_address + sram_start_reserve + sram_private_for_srom;
 _size_SRAM_CM0P                     = cm0plus_sram_reserve - sram_start_reserve - sram_private_for_srom;
@@ -306,7 +304,7 @@ SECTIONS
     /* Set stack top to end of RAM, and stack limit move down by
      * size of stack_dummy section */
     __StackTop = ORIGIN(cm0_ram) + LENGTH(cm0_ram);
-    __StackLimit = __StackTop - SIZEOF(.stack_dummy);
+    __StackLimit = __StackTop - STACK_SIZE;
     PROVIDE(__stack = __StackTop);
 
     /* Check if data + heap + stack exceeds RAM limit */

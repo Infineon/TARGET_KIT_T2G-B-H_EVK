@@ -368,6 +368,7 @@
                     <Personality template="fll" version="4.0">
                         <Param id="configuration" value="auto"/>
                         <Param id="desiredFrequency" value="50.000"/>
+                        <Param id="enableOutputDivider" value="false"/>
                     </Personality>
                 </Block>
                 <Block location="srss[0].clock[0].hfclk[0]">
@@ -507,10 +508,7 @@
                     </Personality>
                 </Block>
                 <Block location="srss[0].clock[0].timerclk[0]">
-                    <Personality template="timerclk" version="3.0">
-                        <Param id="sourceClock" value="imo"/>
-                        <Param id="timerDivider" value="1"/>
-                    </Personality>
+                    <Personality template="timerclk" version="3.0"/>
                 </Block>
                 <Block location="srss[0].clock[0].wco[0]">
                     <Personality template="wco" version="3.0">
@@ -527,6 +525,7 @@
                         <Param id="enableLowPowerProfileMode" value="false"/>
                         <Param id="minCurrRegulator" value="CY_SYSPM_LDO_MODE_NORMAL"/>
                         <Param id="transistorEnable" value="false"/>
+                        <Param id="vadjMv" value="1100"/>
                         <Param id="idlePwrMode" value="CY_CFG_PWR_MODE_DEEPSLEEP"/>
                         <Param id="vddaMv" value="3300"/>
                         <Param id="vdddMv" value="3300"/>

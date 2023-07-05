@@ -14,6 +14,10 @@ The KIT_T2G-B-H_EVK library includes the following:
 * API documentation
 
 ### What Changed?
+#### v1.2.0
+* Updated linker scripts and startup code to align with mtb-pdl-cat1 v3.4.0
+* Added functionality to enable BSP Assistant chip flow
+* Added capabilities to match BSPS created by BSP Assistant chip flow
 #### v1.1.0
 * Add macro `CYBSP_USER_BTN_DRIVE` indicating the drive mode that should be used for user buttons
 #### v1.0.0
@@ -25,8 +29,8 @@ This version of the KIT_T2G-B-H_EVK BSP was validated for compatibility with the
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox™ Software Environment        | 3.0.0   |
-| GCC Compiler                              | 10.3.1  |
+| ModusToolbox™ Software Environment        | 3.1.0   |
+| GCC Compiler                              | 12.2.1  |
 | IAR Compiler                              | 9.30.1  |
 | ARM Compiler                              | 6.16    |
 
@@ -34,7 +38,7 @@ Minimum required ModusToolbox™ Software Environment: v3.0.0
 
 ### More information
 * [KIT_T2G-B-H_EVK BSP API Reference Manual][api]
-* [KIT_T2G-B-H_EVK Documentation](https://www.infineon.com/KIT_T2G-B-H_EVK)
+* [KIT_T2G-B-H_EVK Documentation](https://www.infineon.com/cms/en/product/evaluation-boards/kit_t2g-b-h_evk/)
 * [Cypress Semiconductor, an Infineon Technologies Company](http://www.cypress.com)
 * [Infineon GitHub](https://github.com/infineon)
 * [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)

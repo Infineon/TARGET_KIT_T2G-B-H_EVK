@@ -129,10 +129,12 @@ void Default_Handler(void)
 * The Handler is called when the CPU interrupt0 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr0_Handler(void)
 {
     CM7_CpuIntr_Handler(0);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -142,10 +144,12 @@ void Default_CpuIntr0_Handler(void)
 * The Handler is called when the CPU interrupt1 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr1_Handler(void)
 {
     CM7_CpuIntr_Handler(1);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -155,10 +159,12 @@ void Default_CpuIntr1_Handler(void)
 * The Handler is called when the CPU interrupt2 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr2_Handler(void)
 {
     CM7_CpuIntr_Handler(2);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -168,10 +174,12 @@ void Default_CpuIntr2_Handler(void)
 * The Handler is called when the CPU interrupt3 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr3_Handler(void)
 {
     CM7_CpuIntr_Handler(3);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -181,10 +189,13 @@ void Default_CpuIntr3_Handler(void)
 * The Handler is called when the CPU interrupt4 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr4_Handler(void)
 {
     CM7_CpuIntr_Handler(4);
 }
+CY_SECTION_ITCM_END
+
 
 /*******************************************************************************
 * Function Name: Default_CM7_CpuIntr5_Handler
@@ -193,10 +204,12 @@ void Default_CpuIntr4_Handler(void)
 * The Handler is called when the CPU interrupt5 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr5_Handler(void)
 {
     CM7_CpuIntr_Handler(5);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -206,10 +219,12 @@ void Default_CpuIntr5_Handler(void)
 * The Handler is called when the CPU interrupt6 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr6_Handler(void)
 {
     CM7_CpuIntr_Handler(6);
 }
+CY_SECTION_ITCM_END
 
 
 /*******************************************************************************
@@ -219,10 +234,12 @@ void Default_CpuIntr6_Handler(void)
 * The Handler is called when the CPU interrupt7 occurs.
 *
 *******************************************************************************/
+CY_SECTION_ITCM_BEGIN
 void Default_CpuIntr7_Handler(void)
 {
     CM7_CpuIntr_Handler(7);
 }
+CY_SECTION_ITCM_END
 
 
 void NMIException_Handler   (void) __attribute__ ((weak, alias("Default_NMIException_Handler")));
@@ -244,6 +261,10 @@ void CM7_CpuIntr6_Handler   (void) __attribute__ ((weak, alias("Default_CpuIntr6
 void CM7_CpuIntr7_Handler   (void) __attribute__ ((weak, alias("Default_CpuIntr7_Handler")));
 
 extern const cy_israddress __Vectors[VECTORTABLE_SIZE];
+#if defined (__GNUC__)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Wpedantic\"")
+#endif /* __GNUC__ */
 const cy_israddress __Vectors[VECTORTABLE_SIZE] __VECTOR_TABLE_ATTRIBUTE = {
     (cy_israddress)&__INITIAL_SP,
     (cy_israddress)Reset_Handler,               /* initial PC/Reset */
@@ -280,7 +301,9 @@ const cy_israddress __Vectors[VECTORTABLE_SIZE] __VECTOR_TABLE_ATTRIBUTE = {
     (cy_israddress)Default_Handler,
     (cy_israddress)Default_Handler
 };
-
+#if defined (__GNUC__)
+_Pragma("GCC diagnostic pop")
+#endif /* __GNUC__ */
 
 /* Provide empty __WEAK implementation for the low-level initialization
    routine required by the RTOS-enabled applications.
@@ -341,6 +364,23 @@ void Reset_Handler(void)
     /* Enable ITCM and DTCM */
     SCB->ITCMCR = SCB->ITCMCR | 0x7; /* Set ITCMCR.EN, .RMW and .RETEN fields */
     SCB->DTCMCR = SCB->DTCMCR | 0x7; /* Set DTCMCR.EN, .RMW and .RETEN fields */
+
+#ifdef CORE_NAME_CM7_0
+    CPUSS_CM7_0_CTL |= (0x1 << CPUSS_CM7_0_CTL_INIT_TCM_EN_Pos);
+    CPUSS_CM7_0_CTL |= (0x2 << CPUSS_CM7_0_CTL_INIT_TCM_EN_Pos);
+    CPUSS_CM7_0_CTL |= (0x1 << CPUSS_CM7_0_CTL_INIT_RMW_EN_Pos);
+    CPUSS_CM7_0_CTL |= (0x2 << CPUSS_CM7_0_CTL_INIT_RMW_EN_Pos);
+#elif CORE_NAME_CM7_0
+    CPUSS_CM7_1_CTL |= (0x1 << CPUSS_CM7_1_CTL_INIT_TCM_EN_Pos);
+    CPUSS_CM7_1_CTL |= (0x2 << CPUSS_CM7_1_CTL_INIT_TCM_EN_Pos);
+    CPUSS_CM7_1_CTL |= (0x1 << CPUSS_CM7_1_CTL_INIT_RMW_EN_Pos);
+    CPUSS_CM7_1_CTL |= (0x2 << CPUSS_CM7_1_CTL_INIT_RMW_EN_Pos);
+#endif
+
+    // ITCMCR EN/RMW/RETEN enabled to access ITCM
+    __UNALIGNED_UINT32_WRITE(((void const *)0xE000EF90), 0x2F);
+    // DTCMCR EN/RMW/RETEN enabled to access DTCM
+    __UNALIGNED_UINT32_WRITE(((void const *)0xE000EF94), 0x2F);
 
     /* Enable FPU if present */
     FpuEnable();
