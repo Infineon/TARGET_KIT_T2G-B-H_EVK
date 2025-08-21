@@ -89,7 +89,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="textblock"><p ><a class="anchor" id="md_output_bsps_TARGET_KIT_T2G_B_H_EVK_README"></a> </p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Overview</h1>
-<p >The KIT_T2G-B-H_EVK, a 272-pin evaluation board is based on the TRAVEO T2G family of devices. T2G-B-H MCU is designed for industrial applications. The evaluation board carries a T2G-B-H microcontroller, a M.2 interface connector for interfacing radio modules based on AIROC™ Wi-Fi and Bluetooth® combos (currently not supported), SMIF dual header compatible with Digilent Pmod for interfacing HYPERBUS™ memories (currently not supported), and headers compatible with Arduino for interfacing Arduino shields. In addition, the board features an on-board programmer/debugger (KitProg3), a 512-Mbit QSPI NOR flash, CAN FD transceiver, Gigabit Ethernet PHY transceiver with RJ45 connector interface, a micro-B connector for USB device interface, three user LEDs, one potentiometer, and two push buttons. The board supports operating voltages from 3.3 V to 5.0 V for T2G-B-H device.</p>
+<p >The KIT_T2G-B-H_EVK, a 272-pin evaluation board is based on the TRAVEO T2G family of devices. T2G-B-H MCU is designed for industrial applications. The evaluation board carries a T2G-B-H microcontroller, a M.2 interface connector for interfacing radio modules based on AIROC™ Wi-Fi and Bluetooth® combos (currently not supported), SMIF dual header compatible with Digilent Pmod for interfacing HYPERBUS™ memories (currently not supported), and headers compatible with Arduino for interfacing Arduino shields. In addition, the board features an on-board programmer/debugger (KitProg3), a 512-Mbit QSPI NOR flash, CAN FD transceiver, Gigabit Ethernet PHY transceiver with RJ45 connector interface, a micro-B connector for USB device interface, three user LEDs, one potentiometer, and two push buttons. The board supports operating voltages from 3.3 V to 5.0 V for T2G-B-H device. <br  />
+ <b>Note:</b> Some additional setups will allow you to use more code examples than those shown on the next page. Click <a href="https://github.com/Infineon/TRAVEO_T2G_code_examples#how-to-setup">here</a> for setup instructions.</p>
 <p >To use code from the BSP, simply include a reference to <code>cybsp.h</code>.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Features</h1>
@@ -119,44 +120,50 @@ Kit Contents:</h2>
 <li>Six jumper wires</li>
 <li>Quick start guide</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Low-level Driver References:</h2>
+<ul>
+<li>See <a href="https://infineon.github.io/mtb-hal-cat1/html/modules.html">Hardware abstraction layer (HAL) library</a></li>
+<li>See <a href="https://infineon.github.io/mtb-pdl-cat1/pdl_api_reference_manual/html/index.html">Peripheral driver library (PDL) library</a></li>
+</ul>
+<h1><a class="anchor" id="autotoc_md6"></a>
 BSP Configuration</h1>
-<p >The BSP has a few hooks that allow its behavior to be configured. Some of these items are enabled by default while others must be explicitly enabled. Items enabled by default are specified in the KIT_T2G-B-H_EVK.mk file. The items that are enabled can be changed by creating a custom BSP or by editing the application makefile.</p>
+<p >The BSP has a few hooks that allow its behavior to be configured. Some of these items are enabled by default while others must be explicitly enabled. Items enabled by default are specified in the bsp.mk file. The items that are enabled can be changed by creating a custom BSP or by editing the application makefile.</p>
 <p >Components:</p><ul>
 <li>Device specific category reference (e.g.: CAT1) - This component, enabled by default, pulls in any device specific code for this board.</li>
 </ul>
 <p >Defines:</p><ul>
 <li>CYBSP_WIFI_CAPABLE - This define, disabled by default, causes the BSP to initialize the interface to an onboard wireless chip if it has one.</li>
-<li>CY_USING_HAL - This define, enabled by default, specifies that the HAL is intended to be used by the application. This will cause the BSP to include the applicable header file and to initialize the system level drivers.</li>
+<li>CY_USING_HAL - This define, enabled by default in some BSPs, specifies that the HAL is intended to be used by the application. This will cause the BSP to include the applicable header file and to initialize the system level drivers. Newer BSPs pull in the v3.x HAL, which enables itself via its own makefile, so CY_USING_HAL is not present.</li>
 <li>CYBSP_CUSTOM_SYSCLK_PM_CALLBACK - This define, disabled by default, causes the BSP to skip registering its default SysClk Power Management callback, if any, and instead to invoke the application-defined function <code>cybsp_register_custom_sysclk_pm_callback</code> to register an application-specific callback.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 Clock Configuration</h2>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Clock   </th><th class="markdownTableHeadNone">Source   </th><th class="markdownTableHeadNone">Output Frequency    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">FLL   </td><td class="markdownTableBodyNone">IMO   </td><td class="markdownTableBodyNone">50.0 MHz    </td></tr>
+<td class="markdownTableBodyNone">FLL   </td><td class="markdownTableBodyNone">ECO   </td><td class="markdownTableBodyNone">100.0 MHz    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">PLL   </td><td class="markdownTableBodyNone">IMO   </td><td class="markdownTableBodyNone">100.0 MHz    </td></tr>
+<td class="markdownTableBodyNone">PLL   </td><td class="markdownTableBodyNone">ECO   </td><td class="markdownTableBodyNone">80.0 MHz    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CLK_HF0   </td><td class="markdownTableBodyNone">CLK_PATH0   </td><td class="markdownTableBodyNone">50 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF0   </td><td class="markdownTableBodyNone">CLK_PATH3   </td><td class="markdownTableBodyNone">200 MHz    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CLK_HF1   </td><td class="markdownTableBodyNone">CLK_PATH1   </td><td class="markdownTableBodyNone">340 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF1   </td><td class="markdownTableBodyNone">CLK_PATH1   </td><td class="markdownTableBodyNone">350 MHz    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CLK_HF2   </td><td class="markdownTableBodyNone">CLK_PATH2   </td><td class="markdownTableBodyNone">196 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF2   </td><td class="markdownTableBodyNone">CLK_PATH4   </td><td class="markdownTableBodyNone">80 MHz    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CLK_HF3   </td><td class="markdownTableBodyNone">CLK_PATH3   </td><td class="markdownTableBodyNone">144 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF3   </td><td class="markdownTableBodyNone">CLK_PATH3   </td><td class="markdownTableBodyNone">100 MHz    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CLK_HF4   </td><td class="markdownTableBodyNone">CLK_PATH4   </td><td class="markdownTableBodyNone">100 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF4   </td><td class="markdownTableBodyNone">CLK_PATH2   </td><td class="markdownTableBodyNone">125 MHz    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CLK_HF5   </td><td class="markdownTableBodyNone">CLK_PATH5   </td><td class="markdownTableBodyNone">8 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF5   </td><td class="markdownTableBodyNone">CLK_PATH2   </td><td class="markdownTableBodyNone">125 MHz    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">CLK_HF6   </td><td class="markdownTableBodyNone">CLK_PATH5   </td><td class="markdownTableBodyNone">8 MHz    </td></tr>
+<td class="markdownTableBodyNone">CLK_HF6   </td><td class="markdownTableBodyNone">CLK_PATH3   </td><td class="markdownTableBodyNone">200 MHz    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CLK_HF7   </td><td class="markdownTableBodyNone">CLK_PATH5   </td><td class="markdownTableBodyNone">8 MHz   </td></tr>
+<td class="markdownTableBodyNone">CLK_HF7   </td><td class="markdownTableBodyNone">CLK_PATH5   </td><td class="markdownTableBodyNone">0 MHz   </td></tr>
 </table>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 Power Configuration</h2>
 <ul>
 <li>System Idle Power Mode: Deep Sleep</li>
@@ -164,21 +171,21 @@ Power Configuration</h2>
 <li>VDDD Voltage: 3300 mV</li>
 </ul>
 <p >See the <a href="md_bsp_settings.html">BSP Setttings</a> for additional board specific configuration settings.</p>
-<h1><a class="anchor" id="autotoc_md8"></a>
+<h1><a class="anchor" id="autotoc_md9"></a>
 API Reference Manual</h1>
 <p >The KIT_T2G-B-H_EVK Board Support Package provides a set of APIs to configure, initialize and use the board resources.</p>
 <p >See the <a href="modules.html">BSP API Reference Manual</a> for the complete list of the provided interfaces.</p>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="autotoc_md10"></a>
 More information</h1>
 <ul>
 <li><a href="modules.html">KIT_T2G-B-H_EVK BSP API Reference Manual</a></li>
-<li><a href="https://www.infineon.com/cms/en/product/evaluation-boards/kit_t2g-b-h_evk/">KIT_T2G-B-H_EVK Documentation</a></li>
+<li><a href="https://www.infineon.com/evaluation-board/KIT-T2G-B-H-EVK/">KIT_T2G-B-H_EVK Documentation</a></li>
 <li><a href="http://www.cypress.com">Cypress Semiconductor, an Infineon Technologies Company</a></li>
 <li><a href="https://github.com/infineon">Infineon GitHub</a></li>
 <li><a href="https://www.cypress.com/products/modustoolbox-software-environment">ModusToolbox™</a></li>
 </ul>
 <hr  />
-<p> © Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022. </p>
+<p> © Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2025. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->

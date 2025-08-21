@@ -1,5 +1,5 @@
 /***************************************************************************//**
-* \file xmc7200d_x8384_cm0plus.ld
+* \file xmc7200_x8384_cm0plus.ld
 * \version 1.0.0
 *
 * Linker file for the GNU C compiler.
@@ -41,7 +41,7 @@ SEARCH_DIR(.)
 GROUP(libgcc.a libc.a libm.a libnosys.a)
 ENTRY(Reset_Handler)
 
-/* The size of the stack section at the end of CM7_1 SRAM */
+/* The size of the stack section at the end of CM7 SRAM */
 STACK_SIZE = 0x1000;
 RAMVECTORS_ALIGNMENT                = 128;
 

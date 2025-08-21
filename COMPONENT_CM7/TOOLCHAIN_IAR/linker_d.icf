@@ -1,5 +1,5 @@
 /*******************************************************************************
-* \file xmc7200_x8384_cm7.icf
+* \file xmc7200d_x8384_cm7.icf
 * \version 1.0.0
 *
 * Linker file for the IAR compiler.
@@ -41,14 +41,14 @@ define symbol sram_total_size                   = 0x00100000;
 define symbol sram_private_for_srom             = 0x00000800; /* Private SRAM for SROM (e.g. API processing) */
 define symbol sram_used_by_boot                 = 0x0; /* Used during boot by Cypress firmware (content will be overwritten on reset, so it should not be used for loadable sections in case of RAM build configurations) */
 
-define symbol cm0plus_sram_reserve              = 0x00004000; /* 16K   : cm0 sram size */
-define symbol cm7_0_sram_reserve                = 0x000DC000; /* 880K : cm7_0 sram size */
+define symbol cm0plus_sram_reserve              = 0x00004000; /* 16K : cm0 sram size */
+define symbol cm7_0_sram_reserve                = 0x000CC000; /* 838K: cm7_0 sram size */
+define symbol cm7_1_sram_reserve                = 0x00010000; /* 64K :  cm7_1 sram size */
 define symbol cm7_sram_non_cache_reserve        = 0x00020000; /* 128K  :non-cacheable sram size */
-
 
 define symbol code_flash_total_size             = 0x00830000; /* 8384K: total flash size */
 define symbol cm0plus_code_flash_reserve        = 0x00080000; /* 512K : cm0 flash size */
-define symbol cm7_0_code_flash_reserve          = 0x007B0000; /* 7872K: cm7_0 flash size */
+define symbol cm7_0_code_flash_reserve          = 0x00200000; /* 2048K: cm7_0 flash size */
 
 
 define symbol code_flash_base_address           = 0x10000000;
@@ -72,25 +72,25 @@ define symbol __ICFEDIT_intvec_start__ = 0x00000000;
 /* The following symbols control RAM and flash memory allocation for the CM7 cores.
  * You can change the memory allocation by editing RAM and Flash values.
  * Your changes must be aligned with the corresponding symbols for CM0+ core in 'xx_cm0plus.icf',
- * where 'xx' is the device group; for example, 'xmc7100d_x4160_cm0plus.icf'.
+ * where 'xx' is the device group; for example, 'xmc7200d_x8384_cm0plus.icf'.
  * any changes here must also be aligned in file 'xmc7xxx_partition.h'.
  * after which cm0p core aplication must be build and flashed again.
  */
 /* RAM */
 define symbol __ICFEDIT_region_IRAM1_start__ = 0x28004000; // sram_base_address + cm0plus_sram_reserve;
-define symbol __ICFEDIT_region_IRAM1_end__   = 0x280DFFFF; // cm7_0_sram_reserve;
-define symbol __ICFEDIT_region_IRAM2_start__ = 0x0;
-define symbol __ICFEDIT_region_IRAM2_end__   = 0x0;
+define symbol __ICFEDIT_region_IRAM1_end__   = 0x280CFFFF; // cm7_0_sram_reserve
+define symbol __ICFEDIT_region_IRAM2_start__ = 0x280D0000; // sram_base_address + cm0plus_sram_reserve + cm7_0_sram_reserve;
+define symbol __ICFEDIT_region_IRAM2_end__   = 0x280DFFFF; // sram_total_size - cm0plus_sram_reserve - cm7_0_sram_reserve - cm7_sram_non_cache_reserve
 /* RAM non-cacheable ram */
 /* Always make sure that the starting address of the non-cacheable region is aligned to the non-cacheable region size boundary. */
-define symbol __ICFEDIT_region_IRAM3_start__ = 0x280E0000; // sram_base_address + cm0plus_sram_reserve + cm7_0_sram_reserve;
-define symbol __ICFEDIT_region_IRAM3_end__   = 0x280FFFFF; // sram_total_size - cm0plus_sram_reserve - cm7_0_sram_reserve;
+define symbol __ICFEDIT_region_IRAM3_start__ = 0x280E0000; // sram_base_address + cm0plus_sram_reserve + cm7_0_sram_reserve + cm7_1_sram_reserve;
+define symbol __ICFEDIT_region_IRAM3_end__   = 0x280FFFFF; // sram_total_size - cm0plus_sram_reserve - cm7_0_sram_reserve - cm7_1_sram_reserve;
 
 /* Flash */
 define symbol __ICFEDIT_region_IROM1_start__ = 0x10080000; // code_flash_base_address + cm0plus_code_flash_reserve
-define symbol __ICFEDIT_region_IROM1_end__   = 0x1082FFFF; // cm7_0_code_flash_reserve
-define symbol __ICFEDIT_region_IROM2_start__ = 0x0;
-define symbol __ICFEDIT_region_IROM2_end__   = 0x0;
+define symbol __ICFEDIT_region_IROM1_end__   = 0x1027FFFF; // cm7_0_code_flash_reserve
+define symbol __ICFEDIT_region_IROM2_start__ = 0x10280000; // code_flash_base_address + cm0plus_code_flash_reserve + cm7_0_code_flash_reserve
+define symbol __ICFEDIT_region_IROM2_end__   = 0x1082FFFF; // code_flash_total_size - cm0plus_code_flash_reserve - cm7_0_code_flash_reserve
 
 define symbol __ICFEDIT_region_EROM1_start__ = 0x0;
 define symbol __ICFEDIT_region_EROM1_end__   = 0x0;
@@ -122,7 +122,8 @@ define symbol stack_reserve                     = (__ICFEDIT_size_cstack__ + (ec
 /* SRAM reservations */
 define symbol _base_SRAM_CM7_0                  = __ICFEDIT_region_IRAM1_start__;
 define symbol _size_SRAM_CM7_0                  = __ICFEDIT_region_IRAM1_end__ - __ICFEDIT_region_IRAM1_start__ + 1;
-
+define symbol _base_SRAM_CM7_1                  = __ICFEDIT_region_IRAM2_start__;
+define symbol _size_SRAM_CM7_1                  = __ICFEDIT_region_IRAM2_end__ - __ICFEDIT_region_IRAM2_start__ + 1;
 define symbol _base_SRAM_NON_CACHE              = __ICFEDIT_region_IRAM3_start__;
 define symbol _size_SRAM_NON_CACHE              = __ICFEDIT_region_IRAM3_end__ - __ICFEDIT_region_IRAM3_start__ + 1;
 
@@ -131,13 +132,26 @@ define symbol _base_CODE_FLASH_CM0P             = code_flash_base_address;
 define symbol _size_CODE_FLASH_CM0P             = cm0plus_code_flash_reserve;
 define symbol _base_CODE_FLASH_CM7_0            = __ICFEDIT_region_IROM1_start__;
 define symbol _size_CODE_FLASH_CM7_0            = __ICFEDIT_region_IROM1_end__ - __ICFEDIT_region_IROM1_start__ + 1;
+define symbol _base_CODE_FLASH_CM7_1            = __ICFEDIT_region_IROM2_start__;
+define symbol _size_CODE_FLASH_CM7_1            = __ICFEDIT_region_IROM2_end__ - __ICFEDIT_region_IROM2_start__ + 1;
 
+if(isdefinedsymbol(_CORE_CM7_1_))
+{
+    define symbol _base_SRAM                    = _base_SRAM_CM7_1;
+    define symbol _size_SRAM                    = _size_SRAM_CM7_1;
+    define symbol _base_CODE_FLASH              = _base_CODE_FLASH_CM7_1;
+    define symbol _size_CODE_FLASH              = _size_CODE_FLASH_CM7_1;
+}
 
-define symbol _base_SRAM                        = _base_SRAM_CM7_0;
-define symbol _size_SRAM                        = _size_SRAM_CM7_0;
-define symbol _base_CODE_FLASH                  = _base_CODE_FLASH_CM7_0;
-define symbol _size_CODE_FLASH                  = _size_CODE_FLASH_CM7_0;
+if(isdefinedsymbol(_CORE_CM7_0_))
+{
+    define symbol _base_SRAM                    = _base_SRAM_CM7_0;
+    define symbol _size_SRAM                    = _size_SRAM_CM7_0;
+    define symbol _base_CODE_FLASH              = _base_CODE_FLASH_CM7_0;
+    define symbol _size_CODE_FLASH              = _size_CODE_FLASH_CM7_0;
+}
 
+/* Note: If _CORE_CM7_1_ or _CORE_CM7_0_ is not defined in linker option then Linking will fail */
 
 /*============================================================
  * Memory definitions
@@ -147,7 +161,10 @@ define symbol _size_CODE_FLASH                  = _size_CODE_FLASH_CM7_0;
 define memory mem with size = 4G;
 
 define region SRAM                              = mem:[from _base_SRAM                  size _size_SRAM          ];
+if(isdefinedsymbol(_CORE_CM7_0_))
+{
 define region SRAM_NONCACHE                     = mem:[from _base_SRAM_NON_CACHE        size _size_SRAM_NON_CACHE];
+}
 define region CODE_FLASH                        = mem:[from _base_CODE_FLASH            size _size_CODE_FLASH    ];
 
 /*============================================================
@@ -158,7 +175,10 @@ define block CSTACK         with alignment = 8, size = stack_reserve { };
 define block HEAP           with expanding size, alignment = 8, minimum size = heap_reserve { };
 define block HEAP_STACK     { block HEAP, last block CSTACK };
 define block CM0P_RO with size = (_size_CODE_FLASH_CM0P)  { readonly section .cy_m0p_image };
+if(isdefinedsymbol(_CORE_CM7_0_))
+{
 define block CY_SHAREDMEM   with alignment = 32 { section .cy_sharedmem };
+}
 
 /*============================================================
  * Initialization
@@ -184,7 +204,10 @@ place in          CODE_FLASH  { readonly };
 place in          SRAM  { readwrite };
 place at end   of SRAM  { block HEAP_STACK };
 
+if(isdefinedsymbol(_CORE_CM7_0_))
+{
 place in          SRAM_NONCACHE  { block CY_SHAREDMEM };
+}
 
 keep {  section .intvec  };
 keep {  section .cy_m0p_image  };
